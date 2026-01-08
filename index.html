@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CRE Excel Processor</title>
+</head>
+<body>
+  <h1>Upload CRE Excel</h1>
+
+  <form id="upload-form">
+    <input type="file" id="file" name="file" accept=".xlsx" required />
+    <button type="submit">Process</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const form = document.getElementById('upload-form');
+    const statusEl = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('file');
+      if (!fileInput.files.length) return;
+
+      statusEl.textContent = 'Uploading and processing...';
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const res = await fetch('/.netlify/functions/process-excel', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          statusEl.textContent = 'Error: ' + text;
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'output.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        statusEl.textContent = 'Done. File downloaded.';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Unexpected error.';
+      }
+    });
+  </script>
+</body>
+</html>
