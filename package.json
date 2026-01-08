@@ -5,11 +5,11 @@
     "scripts": {
       "dev": "netlify dev",
       "build": "echo \"No build step\"",
-      "start": "netlify dev"
+      "start": "netlify dev",
     },
     "dependencies": {
       "exceljs": "^4.3.0",
-      "busboy": "^1.6.0"
+      "busboy": "^1.6.0",
     },
     "devDependencies": {
       "netlify-cli": "^17.0.0"
